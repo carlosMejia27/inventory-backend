@@ -8,4 +8,6 @@ public interface IcategoryService {
 
     public ResponseEntity<CategoryRespondeRest> search();
     public ResponseEntity<CategoryRespondeRest> searchByID(Long id);
+
+    public ResponseEntity<CategoryRespondeRest> save( Category category);
 }
