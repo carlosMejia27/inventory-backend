@@ -6,9 +6,11 @@ import com.company.inventary.repository.CategoryDao;
 import com.company.inventary.repository.ProductDao;
 import com.company.inventary.response.CategoryRespondeRest;
 import com.company.inventary.response.ProductRespondeRest;
+import com.company.inventary.util.Util;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +29,7 @@ public class ProductServiceImpl implements IProductService{
     }
 
     @Override
+    @Transactional
     public ResponseEntity<ProductRespondeRest> save(Product product, Long categoryId) {
         ProductRespondeRest response=new ProductRespondeRest();
         List<Product> list=new ArrayList<>();
@@ -34,13 +37,14 @@ public class ProductServiceImpl implements IProductService{
         try{
             Optional<Category> category=categoryDao.findById(categoryId);
             if(category.isPresent()){
-                System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
                 product.setCategory(category.get());
             }else{
                 response.setMetada("respuesta no ok" ,"-1","categoria no encontrada en la asociacion");
                 return new ResponseEntity<ProductRespondeRest>(response, HttpStatus.NOT_FOUND);
             }
+
             Product productsave=productDao.save(product);
+
             if (productsave!=null){
                 list.add(productsave);
                 response.getProduct().setProducts(list);
@@ -58,5 +62,37 @@ public class ProductServiceImpl implements IProductService{
 
         return  new ResponseEntity<ProductRespondeRest>(response, HttpStatus.OK);
 
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ResponseEntity<ProductRespondeRest> searchById(Long id) {
+        ProductRespondeRest response=new ProductRespondeRest();
+        List<Product> list=new ArrayList<>();
+
+        try{
+            // buscar por id
+            Optional<Product> product=productDao.findById(id);
+            if(product.isPresent()){
+
+                byte[] imagenDescomprimida= Util.decompressZLib(product.get().getPicture());
+                product.get().setPicture(imagenDescomprimida);
+                list.add(product.get());
+                response.getProduct().setProducts(list);
+                response.setMetada("respuesta ok","00","producto encontrado");
+
+            }else{
+                response.setMetada("respuesta no ok" ,"-1","Producto no encontrada en la asociacion");
+                return new ResponseEntity<ProductRespondeRest>(response, HttpStatus.NOT_FOUND);
+            }
+
+        }catch (Exception e){
+            e.getStackTrace();
+            response.setMetada("respuesta no ok" ,"-1","Error al guardar producto");
+            return new ResponseEntity<ProductRespondeRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+
+        return  new ResponseEntity<ProductRespondeRest>(response, HttpStatus.OK);
     }
 }

@@ -38,4 +38,10 @@ public class ProductRestController {
         ResponseEntity<ProductRespondeRest> responde=productService.save(product,categoryId);
         return responde;
     }
+
+    @GetMapping("products/{id}")
+    public ResponseEntity<ProductRespondeRest> searchbyId(@PathVariable long id){
+         ResponseEntity<ProductRespondeRest> responde=productService.searchById(id);
+        return responde;
+    }
 }
