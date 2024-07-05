@@ -13,4 +13,7 @@ public interface IProductService {
 
     public ResponseEntity<ProductRespondeRest> deletById(Long id);
 
+    public ResponseEntity<ProductRespondeRest> search();
+
+
 }

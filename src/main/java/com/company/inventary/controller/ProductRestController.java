@@ -1,6 +1,7 @@
 package com.company.inventary.controller;
 
 import com.company.inventary.model.Product;
+import com.company.inventary.response.CategoryRespondeRest;
 import com.company.inventary.response.ProductRespondeRest;
 import com.company.inventary.service.IProductService;
 import com.company.inventary.util.Util;
@@ -54,6 +55,12 @@ public class ProductRestController {
     @DeleteMapping("products/{id}")
     public ResponseEntity<ProductRespondeRest> deleteById(@PathVariable long id){
         ResponseEntity<ProductRespondeRest> responde=productService.deletById(id);
+        return responde;
+    }
+
+    @GetMapping("/products")
+    public ResponseEntity<ProductRespondeRest> search(){
+        ResponseEntity<ProductRespondeRest> responde=productService.search();
         return responde;
     }
 }
