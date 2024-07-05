@@ -8,4 +8,6 @@ public interface IProductService {
 
     public ResponseEntity<ProductRespondeRest> save(Product product ,Long categoryId);
     public ResponseEntity<ProductRespondeRest> searchById(Long id);
+
+    public ResponseEntity<ProductRespondeRest> searchByName(String name);
 }
