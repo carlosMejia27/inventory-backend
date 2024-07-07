@@ -192,4 +192,60 @@ public class ProductServiceImpl implements IProductService{
         return  new ResponseEntity<ProductRespondeRest>(response, HttpStatus.OK);
     }
 
+    @Override
+    @Transactional
+    public ResponseEntity<ProductRespondeRest> update(Product product, Long categoryId, Long IdProducto) {
+        ProductRespondeRest response=new ProductRespondeRest();
+        List<Product> list=new ArrayList<>();
+
+        try{
+            Optional<Category> category=categoryDao.findById(categoryId);
+            if(category.isPresent()){
+                product.setCategory(category.get());
+            }else{
+                response.setMetada("respuesta no ok" ,"-1","categoria  no encontrada en la asociacion");
+                return new ResponseEntity<ProductRespondeRest>(response, HttpStatus.NOT_FOUND);
+            }
+
+            // buscar producto a actualizar
+            Optional<Product> productBuscar=productDao.findById(IdProducto);
+
+            if (productBuscar.isPresent()){
+
+                //actualizo el producto
+                productBuscar.get().setAccount(product.getAccount());
+                productBuscar.get().setCategory(product.getCategory());
+                productBuscar.get().setName(product.getName());
+                productBuscar.get().setPicture(product.getPicture());
+                productBuscar.get().setPrecio(product.getPrecio());
+
+                //vuelvo a guardar el producto
+                Product productoUpdate=productDao.save(productBuscar.get());
+
+                if (productoUpdate!=null){
+                    list.add(productoUpdate);
+                    response.getProduct().setProducts(list);
+                    response.setMetada("respuesta ok","00","producto actualizado");
+
+                }else{
+                    response.setMetada("respuesta no ok" ,"-1","producto no actualizado");
+                    return new ResponseEntity<ProductRespondeRest>(response, HttpStatus.BAD_REQUEST);
+                }
+
+
+            }else{
+                response.setMetada("respuesta no ok" ,"-1","Producto no se pudo actualizado");
+                return new ResponseEntity<ProductRespondeRest>(response, HttpStatus.NOT_FOUND);
+            }
+        }catch (Exception e){
+            e.getStackTrace();
+            response.setMetada("respuesta no ok" ,"-1","Error al actualizar producto");
+            return new ResponseEntity<ProductRespondeRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+
+        return  new ResponseEntity<ProductRespondeRest>(response, HttpStatus.OK);
+
+    }
+
 }
