@@ -4,7 +4,10 @@ import com.company.inventary.model.Product;
 import com.company.inventary.response.CategoryRespondeRest;
 import com.company.inventary.response.ProductRespondeRest;
 import com.company.inventary.service.IProductService;
+import com.company.inventary.util.CategoryExcelExport;
+import com.company.inventary.util.ProductExcelExport;
 import com.company.inventary.util.Util;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,7 +36,7 @@ public class ProductRestController {
 
         Product product=new Product();
         product.setName(name);
-        product.setAccount(price);
+        product.setPrecio(price);
         product.setAccount(account);
         product.setPicture(Util.compressZLib(picture.getBytes()));
         ResponseEntity<ProductRespondeRest> responde=productService.save(product,categoryId);
@@ -77,11 +80,24 @@ public class ProductRestController {
 
         Product product=new Product();
         product.setName(name);
-        product.setAccount(price);
+        product.setPrecio(price);
         product.setAccount(account);
         product.setPicture(Util.compressZLib(picture.getBytes()));
         ResponseEntity<ProductRespondeRest> responde=productService.update(product,categoryId,id);
         return responde;
+    }
+
+
+    @GetMapping("/products/export/excel")
+    public void exportToExcel(HttpServletResponse response) throws IOException {
+        response.setContentType("application/octet-stream");
+        String headerKey="Content-Disposition";
+        String headerValue = "attachment; filename=result_products.xlsx";
+        response.setHeader(headerKey,headerValue);
+        ResponseEntity<ProductRespondeRest> products=productService.search();
+        ProductExcelExport productExcelExport=new ProductExcelExport(products.getBody().getProduct().getProducts());
+
+        productExcelExport.export(response);
     }
 
 }
