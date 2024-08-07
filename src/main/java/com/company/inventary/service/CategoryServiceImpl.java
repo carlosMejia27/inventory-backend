@@ -27,6 +27,7 @@ public class CategoryServiceImpl implements IcategoryService {
        CategoryRespondeRest response=new CategoryRespondeRest();
        try {
            List<Category> category= (List<Category>) categoryDao.findAll();
+
            response.getCategoriaResponse().setCategories(category);
            response.setMetada("Respuesta ok","00","respuesta existosa");
 
@@ -70,13 +71,26 @@ public class CategoryServiceImpl implements IcategoryService {
         CategoryRespondeRest response=new CategoryRespondeRest();
         List<Category> list=new ArrayList<>();
         try {
+
+
+            if (!category.getName().matches("[a-zA-Z]+") && !category.getDescripcion().matches("[a-zA-Z]+")) {
+                response.setMetada("no ok", "-1", "solo debes entrar letras");
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            }
+
             Category categorySave=categoryDao.save(category);
+
             if (categorySave!=null){
+                //Verificación de Guardado Exitoso: Aquí se verifica si categorySave no es null.
+                // Esto significa que la categoría fue guardada correctamente en la base de datos.
                 list.add(categorySave);
                 response.getCategoriaResponse().setCategories(list);
-                response.setMetada("ok","00","categoria Guardada ");
+                response.setMetada("ok","00","categoria Guardada correctamente ");
+
+                return new ResponseEntity<CategoryRespondeRest>(response, HttpStatus.OK);
             }else{
-                response.setMetada("no ok","-1","categoria no se pudo guardar ");
+                ///si es nula
+                response.setMetada("no ok","-1","categoria solo letras ");
                 return new ResponseEntity<CategoryRespondeRest>(response, HttpStatus.BAD_REQUEST);
             }
 
@@ -86,7 +100,7 @@ public class CategoryServiceImpl implements IcategoryService {
             return new ResponseEntity<CategoryRespondeRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 
         }
-        return new ResponseEntity<CategoryRespondeRest>(response, HttpStatus.OK);
+
     }
 
     @Override

@@ -4,13 +4,16 @@ import com.company.inventary.response.CategoryRespondeRest;
 import com.company.inventary.service.IcategoryService;
 import com.company.inventary.util.CategoryExcelExport;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
-@CrossOrigin(origins = {"http://localhost:4200"})
+//@CrossOrigin(origins = {"http://localhost:4200"})
+@CrossOrigin(origins = {"*"})
 @RestController
 @RequestMapping("/api/v1")
 public class CategoryRestController {
@@ -36,10 +39,11 @@ public class CategoryRestController {
 
 
     @PostMapping("/categories")
-    public ResponseEntity<CategoryRespondeRest> save(@RequestBody Category category){
+    public ResponseEntity<CategoryRespondeRest> save( @Valid @RequestBody final Category category){
         ResponseEntity<CategoryRespondeRest> responde=servicio.save(category);
         return responde;
     }
+
 
     @PutMapping("/categories/{id}")
     public ResponseEntity<CategoryRespondeRest> update(@RequestBody Category category ,@PathVariable  Long id){

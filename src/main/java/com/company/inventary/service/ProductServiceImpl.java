@@ -7,6 +7,8 @@ import com.company.inventary.repository.ProductDao;
 import com.company.inventary.response.CategoryRespondeRest;
 import com.company.inventary.response.ProductRespondeRest;
 import com.company.inventary.util.Util;
+import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.XSlf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class ProductServiceImpl implements IProductService{
 
   private CategoryDao categoryDao;
@@ -166,6 +169,12 @@ public class ProductServiceImpl implements IProductService{
             // buscar por id
             listAxi= (List<Product>) productDao.findAll();
 
+            for (Product p : listAxi) {
+                System.out.println("********************************************************************");
+                System.out.println("ID: " + p.getId() + ", Picture: " + p.getPicture() + ", Account: " + p.getAccount() +p.getCategory()+p.getPicture());
+            }
+
+
             if(listAxi.size()>0){
 
                 listAxi.stream().forEach((p)->{
@@ -184,6 +193,7 @@ public class ProductServiceImpl implements IProductService{
 
         }catch (Exception e){
             e.getStackTrace();
+            log.error("*************ERRORRR*********{}",e);
             response.setMetada("respuesta no ok" ,"-1","Error al buscar productos");
             return new ResponseEntity<ProductRespondeRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }

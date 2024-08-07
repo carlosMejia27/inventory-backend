@@ -11,11 +11,11 @@ public class RespondeRest {
         return metadatos;
     }
 
-    public void setMetada(String type, String code ,String date) {
+    public void setMetada(String type, String code ,String data) {
        HashMap<String,String> map=new HashMap<String,String>();
         map.put("type",type);
         map.put("code",code);
-        map.put("data",date);
+        map.put("data",data);
         metadatos.add(map);
     }
 
